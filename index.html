@@ -12,7 +12,7 @@
     
     <video id="video" style="display: none;"></video>
     <div id="videoControls">
-        <button id="playPauseButton">Play</button>
+        <button id="playButton">Play</button>
         <input type="range" id="seekBar" value="0" step="1">
         <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
     </div>
@@ -21,7 +21,7 @@
         var url = "aamp://amssamples.streaming.mediaservices.windows.net/683f7e47-bd83-4427-b0a3-26a6c4547782/BigBuckBunny.ism/manifest(format=mpd-time-csf)";
         var player;
         var video;
-        var playPauseButton;
+        var playButton;
         var seekBar;
         var currentTime;
         var duration;
@@ -29,14 +29,14 @@
         window.onload = function() {
             player = new AAMPMediaPlayer();
             video = document.getElementById("video");
-            playPauseButton = document.getElementById("playPauseButton");
+            playButton = document.getElementById("playButton");
             seekBar = document.getElementById("seekBar");
             currentTime = document.getElementById("currentTime");
             duration = document.getElementById("duration");
 
             video.addEventListener("ended", showUI);
             video.addEventListener("timeupdate", updateSeekBar);
-            playPauseButton.addEventListener("click", togglePlayPause);
+            playButton.addEventListener("click", loadAAMPVideo);
             seekBar.addEventListener("input", seek);
         };
 
@@ -80,16 +80,6 @@
             duration.textContent = formatTime(video.duration);
         }
 
-        function togglePlayPause() {
-            if (video.paused) {
-                video.play();
-                playPauseButton.textContent = "Pause";
-            } else {
-                video.pause();
-                playPauseButton.textContent = "Play";
-            }
-        }
-
         function seek() {
             video.currentTime = seekBar.value;
         }
@@ -108,7 +98,7 @@
             }
         });
 
-        window.addEventListener("keydown", function(event) {
+        document.addEventListener("keydown", function(event) {
             if (event.keyCode === 13) { // Enter key
                 loadAAMPVideo();
             }
