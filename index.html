@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player with UI</title>
+</head>
+<body>
+    <div class="header">Header Section</div>
+    <div id="carouselContainer">Carousel Container</div>
+    <div id="languagesContainer">Languages Container</div>
+    
+    <video id="video" style="display: none;"></video>
+    <div id="videoControls">
+        <button id="playPauseButton">Play</button>
+        <input type="range" id="seekBar" value="0" step="1">
+        <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+    </div>
+
+    <script>
+        var url = "aamp://amssamples.streaming.mediaservices.windows.net/683f7e47-bd83-4427-b0a3-26a6c4547782/BigBuckBunny.ism/manifest(format=mpd-time-csf)";
+        var player;
+        var video;
+        var playPauseButton;
+        var seekBar;
+        var currentTime;
+        var duration;
+
+        window.onload = function() {
+            player = new AAMPMediaPlayer();
+            video = document.getElementById("video");
+            playPauseButton = document.getElementById("playPauseButton");
+            seekBar = document.getElementById("seekBar");
+            currentTime = document.getElementById("currentTime");
+            duration = document.getElementById("duration");
+
+            video.addEventListener("ended", showUI);
+            video.addEventListener("timeupdate", updateSeekBar);
+            playPauseButton.addEventListener("click", togglePlayPause);
+            seekBar.addEventListener("input", seek);
+        };
+
+        function loadAAMPVideo() {
+            video.src = url;
+            video.play();
+            video.style.display = "block";
+
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.mozRequestFullScreen) {
+                video.mozRequestFullScreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen();
+            }
+
+            var header = document.querySelector(".header");
+            var carouselContainer = document.getElementById("carouselContainer");
+            var languagesContainer = document.getElementById("languagesContainer");
+
+            header.style.display = "none";
+            carouselContainer.style.display = "none";
+            languagesContainer.style.display = "none";
+        }
+
+        function showUI() {
+            var header = document.querySelector(".header");
+            var carouselContainer = document.getElementById("carouselContainer");
+            var languagesContainer = document.getElementById("languagesContainer");
+
+            header.style.display = "block";
+            carouselContainer.style.display = "block";
+            languagesContainer.style.display = "block";
+        }
+
+        function updateSeekBar() {
+            seekBar.value = video.currentTime;
+            currentTime.textContent = formatTime(video.currentTime);
+            duration.textContent = formatTime(video.duration);
+        }
+
+        function togglePlayPause() {
+            if (video.paused) {
+                video.play();
+                playPauseButton.textContent = "Pause";
+            } else {
+                video.pause();
+                playPauseButton.textContent = "Play";
+            }
+        }
+
+        function seek() {
+            video.currentTime = seekBar.value;
+        }
+
+        function formatTime(timeInSeconds) {
+            var minutes = Math.floor(timeInSeconds / 60);
+            var seconds = Math.floor(timeInSeconds - minutes * 60);
+            return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        }
+
+        document.addEventListener("keydown", function(event) {
+            if (event.keyCode === 8) { // Backspace key
+                if (video.currentTime === video.duration || video.paused) {
+                    showUI();
+                }
+            }
+        });
+
+        window.addEventListener("keydown", function(event) {
+            if (event.keyCode === 13) { // Enter key
+                loadAAMPVideo();
+            }
+        });
+    </script>
+</body>
+</html>
