@@ -91,15 +91,20 @@
             return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
         }
 
+               
+                    function goToHome() {
+        window.location.href = "./index.html";
+    }
+
         document.addEventListener("keydown", function(event) {
             if (event.keyCode === 8) { // Backspace key
                   console.log("backspace is working");
                 // if (video.currentTime === video.duration || video.paused) {
-                    video.pause();
-                    video.style.display = "none";
+                    goToHome();
                     showUI();
+                
+             
                     
-                    console.log('UI rendering');
                   
                 // }
             }
